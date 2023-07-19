@@ -4,7 +4,7 @@ const debug = require('debug')('server');
 const chalk = require('chalk');
 const cors = require('cors');
 const noteRoutes = require('./routes/noteRoutes');
-
+const categoryRoutes = require('./routes/categoryRoutes');
 
 const PORT = 4000;
 const app = express();
@@ -16,6 +16,7 @@ app.use(cors());
 
 // Register the  routes
 app.use('/api/v1', noteRoutes);
+app.use('/api/v1', categoryRoutes);
 
 
 mongoose
