@@ -1,4 +1,5 @@
 const Category = require('../models/category');
+const Note = require('../models/nodeModel');
 
 // Controller function to create a new category
 exports.createCategory = async (req, res) => {
@@ -27,6 +28,21 @@ exports.getAllCategories = async (req, res) => {
         // Fetch all categories from the database
         const categories = await Category.find().exec();
         res.status(200).json(categories);
+    } catch (error) {
+        res.status(500).json({ error: 'Internal server error' });
+    }
+};
+
+// Controller function to get notes for a specific category
+exports.getNotesByCategory = async (req, res) => {
+    try {
+        const categoryId = req.params.categoryId;
+        console.log('Received categoryId:', categoryId); // Add this line for debugging
+
+        // Fetch all notes for the specified category ID
+        const notes = await Note.find({ category: categoryId });
+
+        res.status(200).json({ notes });
     } catch (error) {
         res.status(500).json({ error: 'Internal server error' });
     }

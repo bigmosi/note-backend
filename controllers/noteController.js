@@ -1,4 +1,5 @@
 const Note = require('../models/nodeModel');
+const mongoose = require('mongoose');
 
 exports.createNote = async (req, res) => {
     try {
@@ -81,3 +82,42 @@ exports.reorderNotesWithinCategory = async (req, res) => {
         res.status(500).json({ error: 'Could not reorder notes within the category.' });
     }
 }
+
+// PUT /api/v1/categories/:categoryId/notes/reorder
+exports.reorderNotes = async (req, res) => {
+    const { categoryId } = req.params;
+    const { order } = req.body;
+
+    try {
+        // Check if the order array contains valid ObjectId strings
+        if (!Array.isArray(order) || order.some((noteId) => !mongoose.isValidObjectId(noteId))) {
+            return res.status(400).json({ success: false, error: 'Invalid noteId(s) in the order array.' });
+        }
+
+        // Convert the note IDs from strings to ObjectIds
+        const noteIds = order.map((noteId) => new mongoose.Types.ObjectId(noteId));
+
+        // Find the notes that belong to the specified category and have the provided noteIds
+        const notesToUpdate = await Note.find({ _id: { $in: noteIds }, category: categoryId });
+
+        // Create a map of noteIds to their corresponding order positions
+        const noteOrderMap = {};
+        noteIds.forEach((noteId, index) => {
+            noteOrderMap[noteId] = index;
+        });
+
+        // Update the order field of each note in the category based on the noteOrderMap
+        await Promise.all(
+            notesToUpdate.map(async (note) => {
+                const noteId = note._id.toString();
+                note.order = noteOrderMap[noteId];
+                await note.save();
+            })
+        );
+
+        res.json({ success: true, message: 'Notes reordered successfully.' });
+    } catch (error) {
+        console.error('Error updating note order:', error);
+        res.status(500).json({ success: false, error: 'Internal server error' });
+    }
+};

@@ -1,29 +1,12 @@
 const mongoose = require('mongoose');
-const { Schema } = mongoose;
 
 const noteSchema = new mongoose.Schema({
-    title: {
-        type: String,
-        required: true
-    },
-    content: {
-        type: String,
-        required: true
-    },
-    category: {
-        type: Schema.Types.ObjectId,
-        ref: 'Category'
-    },
-    tags: [{
-        type: String
-    }],
-    order: { type: Number, required: true, default: 0 },
-    createdAt: {
-        type: Date,
-        default: Date.now
-    },
+    title: { type: String, required: true },
+    content: { type: String, required: true },
+    tags: { type: [String], default: [] },
+    createdAt: { type: Date, default: Date.now },
+    order: { type: Number, default: 0 },
+    category: { type: mongoose.Schema.Types.ObjectId, ref: 'Category' }, // Reference to the Category model
 });
 
-const Note = mongoose.model('Node', noteSchema);
-
-module.exports = Note;
+module.exports = mongoose.model('Note', noteSchema);
