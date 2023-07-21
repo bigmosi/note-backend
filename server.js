@@ -12,8 +12,6 @@ const passportConfig = require('./config/passportConfig');
 const authRoutes = require('./routes/authRoutes')
 const session = require('express-session');
 const crypto = require('crypto');
-const MongoStore = require('connect-mongo')(session);
-
 
 const PORT = 4000;
 const app = express();
@@ -29,14 +27,11 @@ const generateSessionSecret = () => {
   return crypto.randomBytes(32).toString('hex');
 };
 
-app.use(
-  session({
-    store: new MongoStore({ url: 'mongodb://localhost:27017/session-store' }),
-    secret: generateSessionSecret(),
-    resave: false,
-    saveUninitialized: true,
-  })
-);
+app.use(session({
+  secret: generateSessionSecret(),
+  resave: false,
+  saveUninitialized: false,
+}));
 
 app.use(passport.initialize());
 app.use(passport.session());
