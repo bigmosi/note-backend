@@ -121,3 +121,29 @@ exports.reorderNotes = async (req, res) => {
         res.status(500).json({ success: false, error: 'Internal server error' });
     }
 };
+
+// Controller to share a note with other users
+
+exports.shareNote = async (req, res) => {
+    const { noteId } = req.params;
+    const { sharedWith } = req.body;
+
+    try {
+        const note = await Note.findById(noteId);
+
+        // Check if the current user is the owner of the note
+        if (!note || note.owner.toString() !== req.user._id.toString()) {
+            return res.status(401).json({ message: 'You are not the owner of this note.' });
+        }
+
+        // Add the sharedWith users to the sharedWith array in the note
+        note.sharedWith.push(...sharedWith);
+
+        // Save the updated note
+        await note.save();
+        return res.json({ message: 'Note shared successfully.' });
+    } catch (error) {
+        console.error('Error sharing note:', error);
+        return res.status(500).json({ message: 'Failed to share the note. Please try again later.' });
+    }
+}
