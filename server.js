@@ -43,7 +43,7 @@ app.use('/api/v1/auth', authRoutes);
 
 // Connect to MongoDB
 mongoose
-  .connect('mongodb://localhost:27017/bookstoreDB')
+  .connect(process.env.MONGO_URI)
   .then(() => {
     console.log('Connected to MongoDB');
 
