@@ -42,7 +42,7 @@ app.use('/api/v1/auth', authRoutes);
 
 // Connect to MongoDB
 mongoose
-  .connect("mongodb+srv://bigmosi:bigmosi@note.spembms.mongodb.net/")
+  .connect(process.env.MONGO_URI)
   .then(() => {
     console.log('Connected to MongoDB');
 
