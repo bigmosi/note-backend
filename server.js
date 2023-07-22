@@ -8,7 +8,6 @@ const noteRoutes = require('./routes/noteRoutes');
 const categoryRoutes = require('./routes/categoryRoutes');
 const handleSocketEvents = require('./sockets/socketHandlers');
 const passport = require('passport');
-const passportConfig = require('./config/passportConfig');
 const authRoutes = require('./routes/authRoutes')
 const session = require('express-session');
 const crypto = require('crypto');
@@ -43,7 +42,7 @@ app.use('/api/v1/auth', authRoutes);
 
 // Connect to MongoDB
 mongoose
-  .connect('mongodb://localhost:27017/bookstoreDB')
+  .connect("mongodb+srv://bigmosi:bigmosi@note.spembms.mongodb.net/")
   .then(() => {
     console.log('Connected to MongoDB');
 
